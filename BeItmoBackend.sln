@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeItmoBackend.Web", "BeItmoBackend.Web\BeItmoBackend.Web.csproj", "{2788D344-3490-42C8-BABE-A89AAF63B47C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeItmoBackend.Core", "BeItmoBackend.Core\BeItmoBackend.Core.csproj", "{B2158CAF-708F-4AE8-9CE4-947B6A14ECC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeItmoBackend.Data", "BeItmoBackend.Data\BeItmoBackend.Data.csproj", "{2D151062-14DD-4459-966E-D6A07D3089FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2788D344-3490-42C8-BABE-A89AAF63B47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2788D344-3490-42C8-BABE-A89AAF63B47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2788D344-3490-42C8-BABE-A89AAF63B47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2788D344-3490-42C8-BABE-A89AAF63B47C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2158CAF-708F-4AE8-9CE4-947B6A14ECC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2158CAF-708F-4AE8-9CE4-947B6A14ECC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2158CAF-708F-4AE8-9CE4-947B6A14ECC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2158CAF-708F-4AE8-9CE4-947B6A14ECC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D151062-14DD-4459-966E-D6A07D3089FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D151062-14DD-4459-966E-D6A07D3089FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D151062-14DD-4459-966E-D6A07D3089FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D151062-14DD-4459-966E-D6A07D3089FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
