@@ -4,26 +4,31 @@ using BeItmoBackend.Core.Interests.Models;
 using BeItmoBackend.Core.Interests.Repositories;
 using BeItmoBackend.Core.UniversityEvents.Models;
 using BeItmoBackend.Core.UniversityEvents.Repositories;
+using BeItmoBackend.Core.UserAnalytics.UserStatistics.Enums;
+using BeItmoBackend.Core.UserAnalytics.UserStatistics.Repositories;
 
 namespace BeItmoBackend.Core.UniversityEvents.Services.Implementations;
 
 public class UniversityEventService : IUniversityEventService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ICategoryRepository _categoryRepository;
     private readonly IInterestRepository _interestRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IUniversityEventRepository _universityEventRepository;
+    private readonly IUserStatisticsRepository _userStatisticsRepository;
 
     public UniversityEventService(
         IUnitOfWork unitOfWork,
         IUniversityEventRepository universityEventRepository,
         ICategoryRepository categoryRepository,
-        IInterestRepository interestRepository)
+        IInterestRepository interestRepository,
+        IUserStatisticsRepository userStatisticsRepository)
     {
         _unitOfWork = unitOfWork;
         _universityEventRepository = universityEventRepository;
         _categoryRepository = categoryRepository;
         _interestRepository = interestRepository;
+        _userStatisticsRepository = userStatisticsRepository;
     }
 
     public async Task<UniversityEvent> AddAsync(UniversityEventCreationModel creationModel,
@@ -127,6 +132,27 @@ public class UniversityEventService : IUniversityEventService
                                                                       CancellationToken cancellationToken)
     {
         var attendedEvent = await _universityEventRepository.RateAttendedEventAsync(universityEvent, cancellationToken);
+
+        if (universityEvent.Score > 3)
+        {
+            var attendedUniversityEvent =
+                await _universityEventRepository.GetByIdAsync(universityEvent.EventId, cancellationToken);
+
+            await _userStatisticsRepository.IncrementPrizeCounterAsync(
+                attendedUniversityEvent.Category.Id,
+                universityEvent.UserId,
+                StatisticType.Category,
+                cancellationToken);
+
+            foreach (var interest in attendedUniversityEvent.Interests)
+            {
+                await _userStatisticsRepository.IncrementPrizeCounterAsync(
+                    interest.Id,
+                    universityEvent.UserId,
+                    StatisticType.Interest,
+                    cancellationToken);
+            }
+        }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
