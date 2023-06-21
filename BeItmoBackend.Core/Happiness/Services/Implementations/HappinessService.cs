@@ -1,6 +1,7 @@
 ﻿using BeItmoBackend.Core.CommonClasses;
 using BeItmoBackend.Core.Happiness.Models;
 using BeItmoBackend.Core.Happiness.Repositories;
+using BeItmoBackend.Core.NeuralNetworks.Repositories;
 
 namespace BeItmoBackend.Core.Happiness.Services.Implementations;
 
@@ -8,13 +9,16 @@ public class HappinessService : IHappinessService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHappinessRepository _happinessRepository;
+    private readonly INeuralNetworkConnectionProvider _neuralNetworkConnectionProvider;
 
     public HappinessService(
         IUnitOfWork unitOfWork,
-        IHappinessRepository happinessRepository)
+        IHappinessRepository happinessRepository,
+        INeuralNetworkConnectionProvider neuralNetworkConnectionProvider)
     {
         _unitOfWork = unitOfWork;
         _happinessRepository = happinessRepository;
+        _neuralNetworkConnectionProvider = neuralNetworkConnectionProvider;
     }
 
     public async Task<HappinessCheckpoint> AddAsync(HappinessCheckpointCreationModel creationModel,
@@ -55,7 +59,6 @@ public class HappinessService : IHappinessService
 
     public Task<int> CalculateHappinessScoreAsync(string message, CancellationToken cancellationToken)
     {
-        //TODO add algorithm for calculation of happiness score
-        return Task.FromResult(50);
+        return _neuralNetworkConnectionProvider.GetEmotionsStatus(message, cancellationToken);
     }
 }

@@ -27,6 +27,11 @@ public class ExceptionMiddleware
             httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
             await httpContext.Response.WriteAsJsonAsync(new { Error = $"{notAuthorizedException.Message}" });
         }
+        catch (ServiceUnavailableException serviceNotAvailableException)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            await httpContext.Response.WriteAsJsonAsync(new { Error = $"{serviceNotAvailableException.Message}" });
+        }
         catch (Exception exception)
         {
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
