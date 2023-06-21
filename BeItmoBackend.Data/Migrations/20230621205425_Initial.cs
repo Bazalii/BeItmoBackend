@@ -53,20 +53,6 @@ namespace BeItmoBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "interest_statistics",
-                columns: table => new
-                {
-                    interest_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    tap_counter = table.Column<int>(type: "integer", nullable: false),
-                    prize_counter = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_interest_statistics", x => new { x.interest_id, x.user_id });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "interests",
                 columns: table => new
                 {
@@ -76,6 +62,21 @@ namespace BeItmoBackend.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_interests", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_statistics",
+                columns: table => new
+                {
+                    type_value_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
+                    tap_counter = table.Column<int>(type: "integer", nullable: false),
+                    prize_counter = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_statistics", x => new { x.type_value_id, x.user_id });
                 });
 
             migrationBuilder.CreateTable(
@@ -234,7 +235,7 @@ namespace BeItmoBackend.Data.Migrations
                 name: "interest_db_model_user_db_model");
 
             migrationBuilder.DropTable(
-                name: "interest_statistics");
+                name: "user_statistics");
 
             migrationBuilder.DropTable(
                 name: "university_events");

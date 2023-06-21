@@ -91,30 +91,6 @@ namespace BeItmoBackend.Data.Migrations
                     b.ToTable("interests", (string)null);
                 });
 
-            modelBuilder.Entity("BeItmoBackend.Data.Interests.Models.InterestStatisticDbModel", b =>
-                {
-                    b.Property<Guid>("InterestId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("interest_id");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.Property<int>("PrizeCounter")
-                        .HasColumnType("integer")
-                        .HasColumnName("prize_counter");
-
-                    b.Property<int>("TapCounter")
-                        .HasColumnType("integer")
-                        .HasColumnName("tap_counter");
-
-                    b.HasKey("InterestId", "UserId")
-                        .HasName("pk_interest_statistics");
-
-                    b.ToTable("interest_statistics", (string)null);
-                });
-
             modelBuilder.Entity("BeItmoBackend.Data.UniversityEvents.Models.AttendedUniversityEventDbModel", b =>
                 {
                     b.Property<int>("UserId")
@@ -190,6 +166,34 @@ namespace BeItmoBackend.Data.Migrations
                         .HasDatabaseName("ix_university_events_category_id");
 
                     b.ToTable("university_events", (string)null);
+                });
+
+            modelBuilder.Entity("BeItmoBackend.Data.UserStatistics.Models.UserStatisticDbModel", b =>
+                {
+                    b.Property<Guid>("TypeValueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("type_value_id");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("PrizeCounter")
+                        .HasColumnType("integer")
+                        .HasColumnName("prize_counter");
+
+                    b.Property<int>("TapCounter")
+                        .HasColumnType("integer")
+                        .HasColumnName("tap_counter");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.HasKey("TypeValueId", "UserId")
+                        .HasName("pk_user_statistics");
+
+                    b.ToTable("user_statistics", (string)null);
                 });
 
             modelBuilder.Entity("BeItmoBackend.Data.Users.Models.UserDbModel", b =>
