@@ -2,6 +2,7 @@
 using BeItmoBackend.Data.Happiness.Models;
 using BeItmoBackend.Data.Interests.Models;
 using BeItmoBackend.Data.UniversityEvents.Models;
+using BeItmoBackend.Data.Users.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -18,6 +19,7 @@ public class BeItmoContext : DbContext
     public DbSet<UniversityEventDbModel> UniversityEvents { get; set; } = null!;
     public DbSet<InterestDbModel> Interests { get; set; } = null!;
     public DbSet<InterestStatisticDbModel> InterestStatistics { get; set; } = null!;
+    public DbSet<UserDbModel> Users { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
