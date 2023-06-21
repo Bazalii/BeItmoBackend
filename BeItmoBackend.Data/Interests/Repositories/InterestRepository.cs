@@ -25,15 +25,6 @@ public class InterestRepository : IInterestRepository
         return _mapper.MapDbModelToInterest(entityEntry.Entity);
     }
 
-    public async Task<InterestStatistic> AddStatisticAsync(InterestStatistic statistic,
-                                                           CancellationToken cancellationToken)
-    {
-        var entityEntry = await _context.InterestStatistics
-            .AddAsync(_mapper.MapInterestStatisticToDbModel(statistic), cancellationToken);
-
-        return _mapper.MapDbModelToInterestStatistic(entityEntry.Entity);
-    }
-
     public async Task<Interest> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var dbModel = await _context.Interests.FirstOrDefaultAsync(dbModel => dbModel.Id == id, cancellationToken) ??
@@ -42,45 +33,11 @@ public class InterestRepository : IInterestRepository
         return _mapper.MapDbModelToInterest(dbModel);
     }
 
-    public async Task<InterestStatistic> GetStatisticByInterestIdAndUserIdAsync(
-        Guid interestId, int userId, CancellationToken cancellationToken)
-    {
-        var dbModel =
-            await _context.InterestStatistics.FirstOrDefaultAsync(
-                dbModel => dbModel.InterestId == interestId && dbModel.UserId == userId, cancellationToken) ??
-            throw new ObjectNotFoundException(
-                $"Interest statistic with interestId: {interestId} and userId:{userId} is not found!");
-
-        return _mapper.MapDbModelToInterestStatistic(dbModel);
-    }
-
     public Task<List<Interest>> GetAllAsync(CancellationToken cancellationToken)
     {
         return _context.Interests
             .Select(dbModel => _mapper.MapDbModelToInterest(dbModel))
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task IncrementStatisticTapCounterAsync(Guid interestId, int userId, CancellationToken cancellationToken)
-    {
-        var dbModel =
-            await _context.InterestStatistics.FirstOrDefaultAsync(
-                dbModel => dbModel.InterestId == interestId && dbModel.UserId == userId, cancellationToken) ??
-            throw new ObjectNotFoundException(
-                $"Interest statistic with interestId: {interestId} and userId:{userId} is not found!");
-
-        dbModel.TapCounter++;
-    }
-
-    public async Task IncrementStatisticPrizeCounterAsync(Guid interestId, int userId, CancellationToken cancellationToken)
-    {
-        var dbModel =
-            await _context.InterestStatistics.FirstOrDefaultAsync(
-                dbModel => dbModel.InterestId == interestId && dbModel.UserId == userId, cancellationToken) ??
-            throw new ObjectNotFoundException(
-                $"Interest statistic with interestId: {interestId} and userId:{userId} is not found!");
-
-        dbModel.PrizeCounter++;
     }
 
     public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)

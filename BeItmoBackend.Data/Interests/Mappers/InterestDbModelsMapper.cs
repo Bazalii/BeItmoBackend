@@ -9,6 +9,4 @@ public partial class InterestDbModelsMapper
 {
     public partial InterestDbModel MapInterestToDbModel(Interest interest);
     public partial Interest MapDbModelToInterest(InterestDbModel dbModel);
-    public partial InterestStatisticDbModel MapInterestStatisticToDbModel(InterestStatistic statistic);
-    public partial InterestStatistic MapDbModelToInterestStatistic(InterestStatisticDbModel statistic);
 }
