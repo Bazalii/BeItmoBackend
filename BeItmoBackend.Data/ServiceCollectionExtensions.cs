@@ -2,7 +2,9 @@
 using BeItmoBackend.Core.CommonClasses;
 using BeItmoBackend.Core.Happiness.Repositories;
 using BeItmoBackend.Core.Interests.Repositories;
+using BeItmoBackend.Core.NeuralNetworks.Repositories;
 using BeItmoBackend.Core.UniversityEvents.Repositories;
+using BeItmoBackend.Core.UserAnalytics.UserStatistics.Repositories;
 using BeItmoBackend.Core.Users.Repositories;
 using BeItmoBackend.Data.Categories.Mappers;
 using BeItmoBackend.Data.Categories.Repositories;
@@ -10,10 +12,13 @@ using BeItmoBackend.Data.Happiness.Mappers;
 using BeItmoBackend.Data.Happiness.Repositories;
 using BeItmoBackend.Data.Interests.Mappers;
 using BeItmoBackend.Data.Interests.Repositories;
+using BeItmoBackend.Data.NeuralNetworks.HttpClients;
 using BeItmoBackend.Data.UniversityEvents.Mappers;
 using BeItmoBackend.Data.UniversityEvents.Repositories;
 using BeItmoBackend.Data.Users.Mappers;
 using BeItmoBackend.Data.Users.Repositories;
+using BeItmoBackend.Data.UserStatistics.Mappers;
+using BeItmoBackend.Data.UserStatistics.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,14 +39,18 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IInterestRepository, InterestRepository>();
         serviceCollection.AddScoped<IUniversityEventRepository, UniversityEventRepository>();
         serviceCollection.AddScoped<IUserRepository, UserRepository>();
+        serviceCollection.AddScoped<IUserStatisticsRepository, UserStatisticsRepository>();
 
         serviceCollection.AddScoped<CategoryDbModelsMapper>();
         serviceCollection.AddScoped<HappinessDbModelsMapper>();
         serviceCollection.AddScoped<InterestDbModelsMapper>();
         serviceCollection.AddScoped<UniversityEventDbModelsMapper>();
         serviceCollection.AddScoped<UserDbModelsMapper>();
+        serviceCollection.AddScoped<UserStatisticsDbModelsMapper>();
 
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        serviceCollection.AddHttpClient<INeuralNetworkConnectionProvider, NeuralNetworkConnectionHttpProvider>();
 
         return serviceCollection;
     }
