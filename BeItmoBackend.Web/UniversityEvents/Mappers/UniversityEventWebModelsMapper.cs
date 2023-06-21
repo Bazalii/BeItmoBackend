@@ -19,6 +19,9 @@ public partial class UniversityEventWebModelsMapper
     public partial UniversityEventCardResponse MapUniversityEventCardToResponse(
         UniversityEventCard universityEventCard);
 
+    public partial AttendedUniversityEventResponse MapAttendedEventToResponse(
+        AttendedUniversityEvent universityEvent);
+
     private string MapCategoryToName(Category category) => category.Name;
 
     private List<string> MapInterestsToNames(List<Interest> interests) =>

@@ -17,6 +17,7 @@ public class BeItmoContext : DbContext
     public DbSet<CategoryDbModel> Categories { get; set; } = null!;
     public DbSet<HappinessCheckpointDbModel> HappinessCheckpoints { get; set; } = null!;
     public DbSet<UniversityEventDbModel> UniversityEvents { get; set; } = null!;
+    public DbSet<AttendedUniversityEventDbModel> AttendedUniversityEvents { get; set; } = null!;
     public DbSet<InterestDbModel> Interests { get; set; } = null!;
     public DbSet<InterestStatisticDbModel> InterestStatistics { get; set; } = null!;
     public DbSet<UserDbModel> Users { get; set; } = null!;

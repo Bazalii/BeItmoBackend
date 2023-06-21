@@ -21,6 +21,9 @@ public partial class UniversityEventDbModelsMapper
     public partial UniversityEventDbModel MapEventToDbModel(UniversityEvent universityEvent);
     public partial UniversityEvent MapDbModelToEvent(UniversityEventDbModel dbModel);
     public partial UniversityEventCard MapDbModelToEventCardInformation(UniversityEventDbModel dbModel);
+    
+    public partial AttendedUniversityEventDbModel MapAttendedEventToDbModel(AttendedUniversityEvent universityEvent);
+    public partial AttendedUniversityEvent MapDbModelToAttendedEvent(AttendedUniversityEventDbModel dbModel);
 
     private CategoryDbModel MapCategoryToDbModel(Category category) =>
         _context.Categories.First(dbModel => dbModel.Id == category.Id);
