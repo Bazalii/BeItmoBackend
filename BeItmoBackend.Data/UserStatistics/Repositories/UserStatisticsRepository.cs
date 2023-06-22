@@ -85,6 +85,19 @@ public class UserStatisticsRepository : IUserStatisticsRepository
         dbModel.PrizeCounter++;
     }
 
+    public async Task UpdatePrizeCounterAsync(Guid typeValueId, int userId, StatisticType type, int value,
+                                        CancellationToken cancellationToken)
+    {
+        var dbModel =
+            await _context.UserStatistics.FirstOrDefaultAsync(
+                dbModel => dbModel.TypeValueId == typeValueId && dbModel.UserId == userId && dbModel.Type == type,
+                cancellationToken) ??
+            throw new ObjectNotFoundException(
+                $"Interest statistic with TypeValueId: {typeValueId}, userId:{userId} and type {type} is not found!");
+
+        dbModel.PrizeCounter = value;
+    }
+
     public async Task RemoveAsync(Guid typeValueId, int userId, StatisticType type, CancellationToken cancellationToken)
     {
         var dbModel =

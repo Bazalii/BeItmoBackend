@@ -133,11 +133,26 @@ public class UniversityEventService : IUniversityEventService
     {
         var attendedEvent = await _universityEventRepository.RateAttendedEventAsync(universityEvent, cancellationToken);
 
+        var attendedUniversityEvent =
+            await _universityEventRepository.GetByIdAsync(universityEvent.EventId, cancellationToken);
+
+        await _userStatisticsRepository.IncrementTapCounterAsync(
+            attendedUniversityEvent.Category.Id,
+            universityEvent.UserId,
+            StatisticType.Category,
+            cancellationToken);
+
+        foreach (var interest in attendedUniversityEvent.Interests)
+        {
+            await _userStatisticsRepository.IncrementTapCounterAsync(
+                interest.Id,
+                universityEvent.UserId,
+                StatisticType.Interest,
+                cancellationToken);
+        }
+
         if (universityEvent.Score > 3)
         {
-            var attendedUniversityEvent =
-                await _universityEventRepository.GetByIdAsync(universityEvent.EventId, cancellationToken);
-
             await _userStatisticsRepository.IncrementPrizeCounterAsync(
                 attendedUniversityEvent.Category.Id,
                 universityEvent.UserId,

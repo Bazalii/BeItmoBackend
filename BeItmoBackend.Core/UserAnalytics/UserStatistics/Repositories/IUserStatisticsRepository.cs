@@ -21,6 +21,9 @@ public interface IUserStatisticsRepository
     Task IncrementPrizeCounterAsync(Guid typeValueId, int userId, StatisticType type,
                                     CancellationToken cancellationToken);
 
+    Task UpdatePrizeCounterAsync(Guid typeValueId, int userId, StatisticType type, int value,
+                                 CancellationToken cancellationToken);
+
     Task RemoveAsync(Guid typeValueId, int userId, StatisticType type,
                      CancellationToken cancellationToken);
 }

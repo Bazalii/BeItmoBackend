@@ -8,6 +8,7 @@ using BeItmoBackend.Core.UserAnalytics.UserStatistics.Models;
 using BeItmoBackend.Core.UserAnalytics.UserStatistics.Repositories;
 using BeItmoBackend.Core.Users.Models;
 using BeItmoBackend.Core.Users.Repositories;
+using MathNet.Numerics;
 
 namespace BeItmoBackend.Core.Users.Services.Implementations;
 
@@ -40,32 +41,68 @@ public class UserService : IUserService
 
         foreach (var id in creationModel.CategoryIds)
         {
+            categories.Add(await _categoryRepository.GetByIdAsync(id, cancellationToken));
+        }
+
+        foreach (var category in await _categoryRepository.GetAllAsync(cancellationToken))
+        {
+            if (creationModel.CategoryIds.Contains(category.Id))
+            {
+                await _userStatisticsRepository.AddAsync(
+                    new UserStatistic
+                    {
+                        TypeValueId = category.Id,
+                        UserId = creationModel.Id,
+                        Type = StatisticType.Category,
+                        TapCounter = 3,
+                        PrizeCounter = 4
+                    }, cancellationToken);
+
+                continue;
+            }
+
             await _userStatisticsRepository.AddAsync(
                 new UserStatistic
                 {
-                    TypeValueId = id,
+                    TypeValueId = category.Id,
                     UserId = creationModel.Id,
                     Type = StatisticType.Category,
-                    TapCounter = 3,
-                    PrizeCounter = 4
+                    TapCounter = 0,
+                    PrizeCounter = 1
                 }, cancellationToken);
-
-            categories.Add(await _categoryRepository.GetByIdAsync(id, cancellationToken));
         }
 
         foreach (var id in creationModel.InterestIds)
         {
+            interests.Add(await _interestRepository.GetByIdAsync(id, cancellationToken));
+        }
+
+        foreach (var interest in await _interestRepository.GetAllAsync(cancellationToken))
+        {
+            if (creationModel.InterestIds.Contains(interest.Id))
+            {
+                await _userStatisticsRepository.AddAsync(
+                    new UserStatistic
+                    {
+                        TypeValueId = interest.Id,
+                        UserId = creationModel.Id,
+                        Type = StatisticType.Interest,
+                        TapCounter = 3,
+                        PrizeCounter = 4
+                    }, cancellationToken);
+
+                continue;
+            }
+
             await _userStatisticsRepository.AddAsync(
                 new UserStatistic
                 {
-                    TypeValueId = id,
+                    TypeValueId = interest.Id,
                     UserId = creationModel.Id,
                     Type = StatisticType.Interest,
-                    TapCounter = 3,
-                    PrizeCounter = 4
+                    TapCounter = 0,
+                    PrizeCounter = 1
                 }, cancellationToken);
-
-            interests.Add(await _interestRepository.GetByIdAsync(id, cancellationToken));
         }
 
         //TODO add getting of scores from user information
@@ -107,15 +144,21 @@ public class UserService : IUserService
         {
             if (user.Categories.FirstOrDefault(category => category.Id == id) is null)
             {
-                await _userStatisticsRepository.AddAsync(
-                    new UserStatistic
-                    {
-                        TypeValueId = id,
-                        UserId = userId,
-                        Type = StatisticType.Category,
-                        TapCounter = 3,
-                        PrizeCounter = 4
-                    }, cancellationToken);
+                var userStatistics =
+                    await _userStatisticsRepository.GetAsync(id, userId, StatisticType.Category, cancellationToken);
+
+                var newPrizeCounterValue = userStatistics.TapCounter / 2 + 1;
+
+                if (newPrizeCounterValue.IsOdd())
+                {
+                    newPrizeCounterValue++;
+                }
+
+                if (newPrizeCounterValue > userStatistics.PrizeCounter)
+                {
+                    await _userStatisticsRepository.UpdatePrizeCounterAsync(
+                        id, userId, StatisticType.Category, newPrizeCounterValue, cancellationToken);
+                }
             }
         }
 
@@ -132,18 +175,24 @@ public class UserService : IUserService
         {
             if (user.Categories.FirstOrDefault(category => category.Id == id) is null)
             {
-                await _userStatisticsRepository.AddAsync(
-                    new UserStatistic
-                    {
-                        TypeValueId = id,
-                        UserId = userId,
-                        Type = StatisticType.Interest,
-                        TapCounter = 3,
-                        PrizeCounter = 4
-                    }, cancellationToken);
+                var userStatistics =
+                    await _userStatisticsRepository.GetAsync(id, userId, StatisticType.Interest, cancellationToken);
+
+                var newPrizeCounterValue = userStatistics.TapCounter / 2 + 1;
+
+                if (newPrizeCounterValue.IsOdd())
+                {
+                    newPrizeCounterValue++;
+                }
+
+                if (newPrizeCounterValue > userStatistics.PrizeCounter)
+                {
+                    await _userStatisticsRepository.UpdatePrizeCounterAsync(
+                        id, userId, StatisticType.Interest, newPrizeCounterValue, cancellationToken);
+                }
             }
         }
-        
+
         await _userRepository.UpdateInterestsAsync(userId, interestIds, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -152,7 +201,7 @@ public class UserService : IUserService
     public async Task RemoveByIdAsync(int id, CancellationToken cancellationToken)
     {
         await _userRepository.RemoveByIdAsync(id, cancellationToken);
-        
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
