@@ -103,6 +103,20 @@ public class UserRepository : IUserRepository
         }
     }
 
+    public async Task UpdateUserScoresAsync(User user, CancellationToken cancellationToken)
+    {
+        var dbModel =
+            await _context.Users.FirstOrDefaultAsync(dbModel => dbModel.Id == user.Id, cancellationToken) ??
+            throw new ObjectNotFoundException($"User with id:{user.Id} is not found!");
+
+        dbModel.FriendlinessScore = user.FriendlinessScore;
+        dbModel.HealthScore = user.HealthScore;
+        dbModel.FitScore = user.FitScore;
+        dbModel.EcoScore = user.EcoScore;
+        dbModel.OpenScore = user.OpenScore;
+        dbModel.ProScore = user.ProScore;
+    }
+
     public async Task RemoveByIdAsync(int id, CancellationToken cancellationToken)
     {
         var dbModel =

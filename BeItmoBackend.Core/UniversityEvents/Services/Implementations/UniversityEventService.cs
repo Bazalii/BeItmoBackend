@@ -7,6 +7,7 @@ using BeItmoBackend.Core.UniversityEvents.Repositories;
 using BeItmoBackend.Core.UserAnalytics;
 using BeItmoBackend.Core.UserAnalytics.UserStatistics.Enums;
 using BeItmoBackend.Core.UserAnalytics.UserStatistics.Repositories;
+using BeItmoBackend.Core.Users.Repositories;
 
 namespace BeItmoBackend.Core.UniversityEvents.Services.Implementations;
 
@@ -17,19 +18,22 @@ public class UniversityEventService : IUniversityEventService
     private readonly IInterestRepository _interestRepository;
     private readonly IUniversityEventRepository _universityEventRepository;
     private readonly IUserStatisticsRepository _userStatisticsRepository;
+    private readonly IUserRepository _userRepository;
 
     public UniversityEventService(
         IUnitOfWork unitOfWork,
         IUniversityEventRepository universityEventRepository,
         ICategoryRepository categoryRepository,
         IInterestRepository interestRepository,
-        IUserStatisticsRepository userStatisticsRepository)
+        IUserStatisticsRepository userStatisticsRepository,
+        IUserRepository userRepository)
     {
         _unitOfWork = unitOfWork;
         _universityEventRepository = universityEventRepository;
         _categoryRepository = categoryRepository;
         _interestRepository = interestRepository;
         _userStatisticsRepository = userStatisticsRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<UniversityEvent> AddAsync(UniversityEventCreationModel creationModel,
@@ -114,12 +118,12 @@ public class UniversityEventService : IUniversityEventService
             var foundEvent =
                 await _universityEventRepository.GetRandomByCategoryAndInterestAsync(
                     recommendedCategoryId, recommendedInterestId, cancellationToken);
-            
+
             while (events.FirstOrDefault(addedEvent => addedEvent.Id == foundEvent.Id) is not null)
             {
                 recommendedCategoryId = banditsAlgorithmForCategories.GetRecommendationId();
                 recommendedInterestId = banditsAlgorithmForInterests.GetRecommendationId();
-                
+
                 foundEvent =
                     await _universityEventRepository.GetRandomByCategoryAndInterestAsync(
                         recommendedCategoryId, recommendedInterestId, cancellationToken);
@@ -178,6 +182,35 @@ public class UniversityEventService : IUniversityEventService
                                                                       CancellationToken cancellationToken)
     {
         var attendedEvent = await _universityEventRepository.RateAttendedEventAsync(universityEvent, cancellationToken);
+
+        var user = await _userRepository.GetByIdAsync(universityEvent.UserId, cancellationToken);
+
+        var foundEvent = await _universityEventRepository.GetByIdAsync(universityEvent.EventId, cancellationToken);
+
+        //TODO rework user scores
+        switch (foundEvent.Category.Name)
+        {
+            case "BeFriendly":
+                user.FriendlinessScore += 5;
+                break;
+            case "BeHealthy":
+                user.HealthScore += 5;
+                break;
+            case "BeFit":
+                user.FitScore += 5;
+                break;
+            case "BeEco":
+                user.EcoScore += 5;
+                break;
+            case "BeOpen":
+                user.OpenScore += 5;
+                break;
+            case "BePro":
+                user.ProScore += 5;
+                break;
+        }
+
+        await _userRepository.UpdateUserScoresAsync(user, cancellationToken);
 
         var attendedUniversityEvent =
             await _universityEventRepository.GetByIdAsync(universityEvent.EventId, cancellationToken);

@@ -9,5 +9,6 @@ public interface IUserRepository
     Task<bool> ExistsAsync(int id, CancellationToken cancellationToken);
     Task UpdateCategoriesAsync(int userId, List<Guid> categoryIds, CancellationToken cancellationToken);
     Task UpdateInterestsAsync(int userId, List<Guid> interestIds, CancellationToken cancellationToken);
+    Task UpdateUserScoresAsync(User user, CancellationToken cancellationToken);
     Task RemoveByIdAsync(int id, CancellationToken cancellationToken);
 }
