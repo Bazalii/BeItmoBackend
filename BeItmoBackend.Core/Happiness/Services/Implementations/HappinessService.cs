@@ -52,9 +52,11 @@ public class HappinessService : IHappinessService
         return _happinessRepository.ExistsAsync(userId, date, cancellationToken);
     }
 
-    public Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _happinessRepository.RemoveByIdAsync(id, cancellationToken);
+        await _happinessRepository.RemoveByIdAsync(id, cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public Task<int> CalculateHappinessScoreAsync(string message, CancellationToken cancellationToken)

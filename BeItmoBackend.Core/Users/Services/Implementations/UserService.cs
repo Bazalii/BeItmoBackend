@@ -149,8 +149,10 @@ public class UserService : IUserService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public Task RemoveByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task RemoveByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return _userRepository.RemoveByIdAsync(id, cancellationToken);
+        await _userRepository.RemoveByIdAsync(id, cancellationToken);
+        
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

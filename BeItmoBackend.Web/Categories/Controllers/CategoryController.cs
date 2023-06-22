@@ -40,7 +40,7 @@ public class CategoryController
         return categories.Select(category => _mapper.MapCategoryToResponse(category));
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:guid}")]
     public Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return _categoryService.RemoveByIdAsync(id, cancellationToken);

@@ -37,19 +37,23 @@ public class UserController : Controller
 
         return _mapper.MapUserToUserResponse(addedUser);
     }
-    
+
     [HttpGet]
-    public async Task<UserResponse> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<UserResponse> GetByIdAsync(CancellationToken cancellationToken)
     {
-        var user = await _userService.GetByIdAsync(id, cancellationToken);
+        var userId = (int) HttpContext.Items["isuNumber"]!;
+
+        var user = await _userService.GetByIdAsync(userId, cancellationToken);
 
         return _mapper.MapUserToUserResponse(user);
     }
 
     [HttpGet("exists")]
-    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(CancellationToken cancellationToken)
     {
-        return _userService.ExistsAsync(id, cancellationToken);
+        var userId = (int) HttpContext.Items["isuNumber"]!;
+
+        return _userService.ExistsAsync(userId, cancellationToken);
     }
 
     [HttpPut("categories")]
@@ -70,7 +74,7 @@ public class UserController : Controller
         await _userService.UpdateInterestsAsync(userId, updateRequest.InterestIds, cancellationToken);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     public Task RemoveByIdAsync(int id, CancellationToken cancellationToken)
     {
         return _userService.RemoveByIdAsync(id, cancellationToken);

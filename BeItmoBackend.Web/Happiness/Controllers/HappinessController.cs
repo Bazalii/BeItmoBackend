@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using BeItmoBackend.Core.Happiness.Models;
 using BeItmoBackend.Core.Happiness.Services;
 using BeItmoBackend.Web.Happiness.Mappers;
 using BeItmoBackend.Web.Happiness.Models;
@@ -26,9 +27,17 @@ public class HappinessController : Controller
     public async Task<HappinessCheckpointResponse> AddAsync(HappinessCheckpointCreationRequest creationRequest,
                                                             CancellationToken cancellationToken)
     {
+        var userId = (int) HttpContext.Items["isuNumber"]!;
+
         var addedHappinessCheckpoint =
-            await _happinessService.AddAsync(_mapper.MapCreationRequestToCreationModel(creationRequest),
-                                             cancellationToken);
+            await _happinessService.AddAsync(
+                new HappinessCheckpointCreationModel
+                {
+                    UserId = userId,
+                    Note = creationRequest.Note,
+                    Score = creationRequest.Score
+                },
+                cancellationToken);
 
         return _mapper.MapHappinessCheckpointToResponse(addedHappinessCheckpoint);
     }
@@ -53,15 +62,16 @@ public class HappinessController : Controller
         return _happinessService.ExistsAsync(userId, date, cancellationToken);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:guid}")]
     public Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return _happinessService.RemoveByIdAsync(id, cancellationToken);
     }
 
     [HttpPost("calculateHappiness")]
-    public Task<int> CalculateHappinessScoreAsync(string message, CancellationToken cancellationToken)
+    public Task<int> CalculateHappinessScoreAsync(CalculateHappinessRequest request,
+                                                  CancellationToken cancellationToken)
     {
-        return _happinessService.CalculateHappinessScoreAsync(message, cancellationToken);
+        return _happinessService.CalculateHappinessScoreAsync(request.Message, cancellationToken);
     }
 }

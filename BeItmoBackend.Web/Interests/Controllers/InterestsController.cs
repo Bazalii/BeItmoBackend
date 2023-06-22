@@ -38,7 +38,7 @@ public class InterestsController
         return interests.Select(category => _mapper.MapInterestToResponse(category));
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:guid}")]
     public Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return _interestService.RemoveByIdAsync(id, cancellationToken);

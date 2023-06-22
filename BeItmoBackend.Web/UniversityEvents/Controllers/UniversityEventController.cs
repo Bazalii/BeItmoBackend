@@ -75,7 +75,7 @@ public class UniversityEventController : Controller
         return cards.Select(card => _mapper.MapUniversityEventCardToResponse(card));
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:guid}")]
     public Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return _universityEventService.RemoveByIdAsync(id, cancellationToken);
@@ -109,7 +109,7 @@ public class UniversityEventController : Controller
         return events.Select(universityEvent => _mapper.MapUniversityEventToResponse(universityEvent));
     }
 
-    [HttpGet("allRated")]
+    [HttpGet("allRated/{pageNumber:int}/{pageSize:int}")]
     public async Task<IEnumerable<UniversityEventResponse>> GetAllRatedAttendedEventsForUserAsync(
         int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
@@ -142,7 +142,7 @@ public class UniversityEventController : Controller
         return _mapper.MapAttendedEventToResponse(updatedEvent);
     }
 
-    [HttpDelete("attended")]
+    [HttpDelete("attended/{eventId:guid}")]
     public Task RemoveEventFromAttendedAsync(Guid eventId, CancellationToken cancellationToken)
     {
         var userId = (int) HttpContext.Items["isuNumber"]!;
