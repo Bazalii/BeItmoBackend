@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  storage:
+    container_name: be-itmo-storage
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: BeItmo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d BeItmo -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  emotions-neural-network:
+    container_name: emotions-neural-network
+    image: bazalii/emotions-neural-network:latest
+    ports:
+      - "8000:8000"
+  backend:
+    container_name: be-itmo-backend
+    image: bazalii/be-itmo-backend:latest
+    depends_on:
+      storage:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DbConnectionString: Host=storage;Port=5432;Database=BeItmo;Username=postgres;Password=postgres
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+  
+          

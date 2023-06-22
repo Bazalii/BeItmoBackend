@@ -4,7 +4,13 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <ContainerImageName>bazalii/be-itmo-backend</ContainerImageName>
+        <ContainerImageTag>latest</ContainerImageTag>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ContainerPort Include="8080" Type="tcp"/>
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\BeItmoBackend.Core\BeItmoBackend.Core.csproj"/>
@@ -12,7 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.304"/>
         <PackageReference Include="Riok.Mapperly" Version="2.8.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0"/>
     </ItemGroup>
 </Project>
