@@ -4,13 +4,14 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <ContainerImageName>be-itmo-backend</ContainerImageName>
+        <ContainerImageName>bazalii/be-itmo-backend</ContainerImageName>
+        <ContainerImageTag>latest</ContainerImageTag>
     </PropertyGroup>
 
     <ItemGroup>
-        <ContainerPort Include="80" Type="tcp" />
+        <ContainerPort Include="8080" Type="tcp"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <ProjectReference Include="..\BeItmoBackend.Core\BeItmoBackend.Core.csproj"/>
         <ProjectReference Include="..\BeItmoBackend.Data\BeItmoBackend.Data.csproj"/>
