@@ -7,6 +7,10 @@ public interface IUniversityEventRepository
     Task<UniversityEvent> AddAsync(UniversityEvent universityEvent, CancellationToken cancellationToken);
     Task<UniversityEvent> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<UniversityEventCard>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
+
+    Task<UniversityEventCard> GetRandomByCategoryAndInterestAsync(Guid categoryId, Guid interestId,
+                                                                        CancellationToken cancellationToken);
+
     Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task<AttendedUniversityEvent> AttendEventAsync(AttendedUniversityEvent universityEvent,

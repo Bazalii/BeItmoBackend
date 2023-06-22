@@ -58,6 +58,56 @@ public class UniversityEventRepository : IUniversityEventRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<UniversityEventCard> GetRandomByCategoryAndInterestAsync(
+        Guid categoryId, Guid interestId, CancellationToken cancellationToken)
+    {
+        var dbModel =
+            await _context.UniversityEvents
+                .OrderBy(universityEvent => EF.Functions.Random())
+                .Where(universityEvent => universityEvent.Category.Id == categoryId &&
+                                          universityEvent.Interests.FirstOrDefault(
+                                              interest => interest.Id == interestId) != null)
+                .Take(1)
+                .Select(universityEvent => new UniversityEventCard
+                {
+                    Id = universityEvent.Id,
+                    Title = universityEvent.Title,
+                    Content = universityEvent.Content,
+                    StartDate = universityEvent.StartDate,
+                    PictureLink = universityEvent.PictureLink,
+                    Category = new Category
+                    {
+                        Id = universityEvent.Category.Id,
+                        Name = universityEvent.Category.Name
+                    }
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+
+        if (dbModel is null)
+        {
+            dbModel = await _context.UniversityEvents
+                .OrderBy(universityEvent => EF.Functions.Random())
+                .Where(universityEvent => universityEvent.Category.Id == categoryId)
+                .Take(1)
+                .Select(universityEvent => new UniversityEventCard
+                {
+                    Id = universityEvent.Id,
+                    Title = universityEvent.Title,
+                    Content = universityEvent.Content,
+                    StartDate = universityEvent.StartDate,
+                    PictureLink = universityEvent.PictureLink,
+                    Category = new Category
+                    {
+                        Id = universityEvent.Category.Id,
+                        Name = universityEvent.Category.Name
+                    }
+                })
+                .FirstAsync(cancellationToken);
+        }
+
+        return dbModel;
+    }
+
     public async Task RemoveByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var dbModel =
@@ -137,7 +187,8 @@ public class UniversityEventRepository : IUniversityEventRepository
         var dbModel =
             await _context.AttendedUniversityEvents.FirstOrDefaultAsync(
                 dbModel => dbModel.UserId == userId && dbModel.EventId == eventId, cancellationToken) ??
-            throw new ObjectNotFoundException($"Attended event with userId:{userId} and eventId{eventId} is not found!");
+            throw new ObjectNotFoundException(
+                $"Attended event with userId:{userId} and eventId{eventId} is not found!");
 
         _context.AttendedUniversityEvents.Remove(dbModel);
     }

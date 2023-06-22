@@ -4,6 +4,7 @@ using BeItmoBackend.Core.Interests.Models;
 using BeItmoBackend.Core.Interests.Repositories;
 using BeItmoBackend.Core.UniversityEvents.Models;
 using BeItmoBackend.Core.UniversityEvents.Repositories;
+using BeItmoBackend.Core.UserAnalytics;
 using BeItmoBackend.Core.UserAnalytics.UserStatistics.Enums;
 using BeItmoBackend.Core.UserAnalytics.UserStatistics.Repositories;
 
@@ -70,17 +71,62 @@ public class UniversityEventService : IUniversityEventService
 
     public async Task<UniversityEventCard> GetNewForUserAsync(int userId, CancellationToken cancellationToken)
     {
-        //TODO add usage of algorithm for random event
-        var events = await _universityEventRepository.GetAllAsync(1, 1, cancellationToken);
+        var categoryStatistics =
+            await _userStatisticsRepository.GetAllForUserAndTypeAsync(userId, StatisticType.Category,
+                                                                      cancellationToken);
+        var interestStatistics =
+            await _userStatisticsRepository.GetAllForUserAndTypeAsync(userId, StatisticType.Interest,
+                                                                      cancellationToken);
 
-        return events[0];
+        var banditsAlgorithmForCategories = new BanditsAlgorithm(categoryStatistics);
+        var banditsAlgorithmForInterests = new BanditsAlgorithm(interestStatistics);
+
+        var recommendedCategoryId = banditsAlgorithmForCategories.GetSomethingNewId();
+        var recommendedInterestId = banditsAlgorithmForInterests.GetSomethingNewId();
+
+        var foundEvent =
+            await _universityEventRepository.GetRandomByCategoryAndInterestAsync(
+                recommendedCategoryId, recommendedInterestId, cancellationToken);
+
+        return foundEvent;
     }
 
     public async Task<List<UniversityEventCard>> GetPersonalisedAsync(int number, int userId,
                                                                       CancellationToken cancellationToken)
     {
-        //TODO add usage of algorithm for personalised events
-        var events = await _universityEventRepository.GetAllAsync(1, number, cancellationToken);
+        var categoryStatistics =
+            await _userStatisticsRepository.GetAllForUserAndTypeAsync(userId, StatisticType.Category,
+                                                                      cancellationToken);
+        var interestStatistics =
+            await _userStatisticsRepository.GetAllForUserAndTypeAsync(userId, StatisticType.Interest,
+                                                                      cancellationToken);
+
+        var banditsAlgorithmForCategories = new BanditsAlgorithm(categoryStatistics);
+        var banditsAlgorithmForInterests = new BanditsAlgorithm(interestStatistics);
+
+        var events = new List<UniversityEventCard>();
+
+        for (var i = 0; i < number; i++)
+        {
+            var recommendedCategoryId = banditsAlgorithmForCategories.GetRecommendationId();
+            var recommendedInterestId = banditsAlgorithmForInterests.GetRecommendationId();
+
+            var foundEvent =
+                await _universityEventRepository.GetRandomByCategoryAndInterestAsync(
+                    recommendedCategoryId, recommendedInterestId, cancellationToken);
+            
+            while (events.FirstOrDefault(addedEvent => addedEvent.Id == foundEvent.Id) is not null)
+            {
+                recommendedCategoryId = banditsAlgorithmForCategories.GetRecommendationId();
+                recommendedInterestId = banditsAlgorithmForInterests.GetRecommendationId();
+                
+                foundEvent =
+                    await _universityEventRepository.GetRandomByCategoryAndInterestAsync(
+                        recommendedCategoryId, recommendedInterestId, cancellationToken);
+            }
+
+            events.Add(foundEvent);
+        }
 
         return events;
     }
